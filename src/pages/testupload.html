@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test upload</title>
+</head>
+<body>
+    <form>
+        <!-- Can be multiple files if you setup "collection" instead of "model" -->
+        <input type="text" name="title" />
+        <input type="text" name="info" />
+        <input type="file" name="cover" />
+        <input type="submit" value="Submit" />
+      </form>
+      
+      <script type="text/javascript">
+        const form = document.querySelector('form');
+      
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+      
+          const data = {};
+          const formData = new FormData();
+      
+          [...form.elements].forEach(({ name, type, value, files, ...element }) => {
+              if (!['submit', 'file'].includes(type)) {
+                data[name] = value;
+              } else if (type === 'file') {
+                [...files].forEach((file) => {
+                  formData.append(`files.${name}`, file, file.name);
+                });
+              }
+            });
+      
+          formData.append('data', JSON.stringify(data));
+      
+          await fetch('http://localhost:1337/api/books', {
+            method: 'post',
+            body: formData
+          });
+        });
+      </script>
+       
+</body>
+</html>
